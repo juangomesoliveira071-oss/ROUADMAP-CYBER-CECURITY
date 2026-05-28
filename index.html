@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* CSS ORIGINAL PRESERVADO */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --bg: #0a0c10; --bg2: #111418; --bg3: #181c22;
@@ -45,290 +44,781 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 /* TABS */
 .tabs { position: sticky; top: 0; z-index: 50; background: rgba(10,12,16,0.93); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
 .tabs-inner { display: flex; overflow-x: auto; scrollbar-width: none; }
+.tabs-inner::-webkit-scrollbar { display: none; }
 .tab-btn { font-family: var(--font-mono); font-size: 12px; color: var(--text3); background: none; border: none; border-bottom: 2px solid transparent; padding: 15px 20px; cursor: pointer; white-space: nowrap; transition: color 0.2s, border-color 0.2s; letter-spacing: 0.05em; text-transform: uppercase; }
+.tab-btn:hover { color: var(--text2); }
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* SECTIONS */
 .section { display: none; padding: 44px 0 80px; }
 .section.active { display: block; }
+.section-intro { font-size: 15px; color: var(--text2); max-width: 600px; margin-bottom: 36px; line-height: 1.8; }
 
 /* PHASE CARDS */
 .phase-card { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; background: var(--bg2); overflow: hidden; transition: border-color 0.2s; }
-.phase-header { display: flex; align-items: center; gap: 12px; padding: 18px 22px; cursor: pointer; }
-.phase-num { font-family: var(--font-mono); font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 4px; white-space: nowrap; }
+.phase-card:hover { border-color: var(--border2); }
+.phase-card.phase-done { border-color: rgba(0,229,160,0.25); }
+.phase-header { display: flex; align-items: center; gap: 12px; padding: 18px 22px; cursor: pointer; user-select: none; }
+.phase-num { font-family: var(--font-mono); font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 4px; white-space: nowrap; letter-spacing: 0.06em; flex-shrink: 0; }
 .num-blue  { background: rgba(0,144,255,0.12);  color: var(--accent2); border: 1px solid rgba(0,144,255,0.2); }
 .num-amber { background: rgba(245,158,11,0.1);  color: var(--accent3); border: 1px solid rgba(245,158,11,0.2); }
 .num-green { background: rgba(0,229,160,0.1);   color: var(--accent);  border: 1px solid rgba(0,229,160,0.2); }
 .num-purple{ background: rgba(167,139,250,0.1); color: var(--purple);  border: 1px solid rgba(167,139,250,0.2); }
 .phase-title-text { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text); flex: 1; }
-.phase-chevron { font-size: 12px; color: var(--text3); transition: transform 0.3s; }
+.phase-period { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+.phase-chevron { font-size: 16px; color: var(--text3); transition: transform 0.25s; flex-shrink: 0; }
 .phase-card.open .phase-chevron { transform: rotate(180deg); }
 .phase-body { display: none; padding: 0 22px 22px; border-top: 1px solid var(--border); }
 .phase-card.open .phase-body { display: block; }
 
-/* SUBSECTIONS & ITEMS */
+/* PHASE PROGRESS BAR */
+.phase-progress { display: flex; align-items: center; gap: 10px; padding: 10px 22px; background: var(--bg3); border-top: 1px solid var(--border); }
+.pp-label { font-family: var(--font-mono); font-size: 11px; color: var(--text3); white-space: nowrap; }
+.pp-track { flex: 1; height: 3px; background: var(--bg2); border-radius: 2px; overflow: hidden; }
+.pp-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; background: var(--accent); }
+.pp-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text3); min-width: 32px; text-align: right; }
+
+/* PHASE COMPLETE CHECKBOX */
+.phase-complete-row { display: flex; align-items: center; gap: 10px; padding: 12px 22px 0; }
+.phase-done-label { font-family: var(--font-mono); font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* SUBSECTIONS */
 .sub { margin-top: 20px; }
 .sub-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.sub-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); flex: 1; display: flex; align-items: center; gap: 8px; }
-.sub-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.add-btn { font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: rgba(0,229,160,0.07); border: 1px solid rgba(0,229,160,0.2); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+.sub-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); display: flex; align-items: center; gap: 8px; flex: 1; }
+.sub-label::after { content: ''; flex: 1; height: 1px; background: var(--border); margin-left: 8px; }
+.add-btn { font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: rgba(0,229,160,0.07); border: 1px solid rgba(0,229,160,0.2); border-radius: 4px; padding: 3px 10px; cursor: pointer; white-space: nowrap; transition: background 0.15s; flex-shrink: 0; }
+.add-btn:hover { background: rgba(0,229,160,0.14); }
+
+/* TAGS / ITEMS */
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.item-wrap { display: inline-flex; align-items: center; gap: 0; position: relative; }
+.item-wrap:hover .del-btn { opacity: 1; }
+.del-btn { opacity: 0; background: rgba(244,63,94,0.12); border: none; color: var(--accent4); font-size: 13px; cursor: pointer; padding: 0 5px 0 3px; border-radius: 0 6px 6px 0; height: 100%; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.del-btn:hover { background: rgba(244,63,94,0.25); }
 
 /* CHECKBOX ITEM */
-.cb-item { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border); color: var(--text2); background: var(--bg3); cursor: pointer; transition: 0.2s; user-select: none; margin-bottom: 8px; margin-right: 8px; }
+.cb-item { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; padding: 5px 12px; border-radius: 6px 0 0 6px; border: 1px solid var(--border); border-right: none; color: var(--text2); background: var(--bg3); cursor: pointer; transition: all 0.15s; user-select: none; }
 .cb-item:hover { border-color: var(--border2); color: var(--text); }
-.cb-item input[type=checkbox] { appearance: none; width: 14px; height: 14px; border: 1px solid var(--text3); border-radius: 3px; cursor: pointer; position: relative; }
+.cb-item input[type=checkbox] { appearance: none; -webkit-appearance: none; width: 14px; height: 14px; border: 1px solid var(--text3); border-radius: 3px; flex-shrink: 0; cursor: pointer; position: relative; transition: all 0.15s; }
 .cb-item input[type=checkbox]:checked { background: var(--accent); border-color: var(--accent); }
 .cb-item input[type=checkbox]:checked::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 10px; color: #0a0c10; font-weight: 700; }
 .cb-item.checked { background: rgba(0,229,160,0.06); border-color: rgba(0,229,160,0.2); color: var(--accent); }
 .cb-item.checked .item-text { text-decoration: line-through; opacity: 0.6; }
 
-/* PHASE PROGRESS */
-.phase-progress { display: flex; align-items: center; gap: 10px; padding: 10px 22px; background: var(--bg3); border-top: 1px solid var(--border); }
-.pp-fill { height: 100%; transition: width 0.4s ease; background: var(--accent); }
+.cb-item.t-cert  { border-color: rgba(0,229,160,0.2);  color: var(--accent);  background: rgba(0,229,160,0.05); }
+.cb-item.t-cert:hover  { border-color: rgba(0,229,160,0.4); }
+.cb-item.t-tool  { border-color: rgba(0,144,255,0.2);  color: #60a5fa; background: rgba(0,144,255,0.05); }
+.cb-item.t-tool:hover  { border-color: rgba(0,144,255,0.4); }
+.cb-item.t-book  { border-color: rgba(245,158,11,0.2); color: var(--accent3); background: rgba(245,158,11,0.05); border-style: dashed; }
+.cb-item.t-book:hover  { border-color: rgba(245,158,11,0.4); }
+.cb-item.t-action{ border-color: rgba(167,139,250,0.2);color: var(--purple); background: rgba(167,139,250,0.05); }
+.cb-item.t-action:hover{ border-color: rgba(167,139,250,0.4); }
+
+.cb-item.checked.t-cert   { background: rgba(0,229,160,0.1); }
+.cb-item.checked.t-tool   { background: rgba(0,144,255,0.08); }
+.cb-item.checked.t-book   { background: rgba(245,158,11,0.08); }
+.cb-item.checked.t-action { background: rgba(167,139,250,0.08); }
+
+/* no del-btn for default items → full radius */
+.item-wrap.no-del .cb-item { border-radius: 6px; border-right: 1px solid var(--border); }
+.item-wrap.no-del .cb-item.t-cert  { border-right: 1px solid rgba(0,229,160,0.2); }
+.item-wrap.no-del .cb-item.t-tool  { border-right: 1px solid rgba(0,144,255,0.2); }
+.item-wrap.no-del .cb-item.t-book  { border-right: 1px solid rgba(245,158,11,0.2); }
+.item-wrap.no-del .cb-item.t-action{ border-right: 1px solid rgba(167,139,250,0.2); }
+
+/* ADD FORM (inline) */
+.add-form { display: none; margin-top: 10px; padding: 12px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; gap: 8px; flex-wrap: wrap; align-items: center; }
+.add-form.open { display: flex; }
+.add-form input { flex: 1; min-width: 180px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; color: var(--text); font-family: var(--font-mono); font-size: 12px; outline: none; transition: border-color 0.15s; }
+.add-form input:focus { border-color: var(--accent); }
+.add-form input::placeholder { color: var(--text3); }
+.add-form select { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; color: var(--text2); font-family: var(--font-mono); font-size: 12px; outline: none; cursor: pointer; }
+.add-form select:focus { border-color: var(--accent); }
+.btn-confirm { background: var(--accent); color: #0a0c10; border: none; border-radius: 6px; padding: 7px 14px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+.btn-confirm:hover { opacity: 0.85; }
+.btn-cancel { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; color: var(--text3); font-family: var(--font-mono); font-size: 12px; cursor: pointer; transition: border-color 0.15s; }
+.btn-cancel:hover { border-color: var(--border2); color: var(--text2); }
 
 /* TIP */
-.tip { margin-top: 18px; padding: 13px 16px; border-radius: 8px; background: rgba(0,229,160,0.04); border: 1px solid rgba(0,229,160,0.13); font-size: 13px; color: var(--text2); }
-.tip strong { color: var(--accent); }
+.tip { margin-top: 18px; padding: 13px 16px; border-radius: 8px; background: rgba(0,229,160,0.04); border: 1px solid rgba(0,229,160,0.13); font-size: 13px; color: var(--text2); line-height: 1.7; }
+.tip strong { color: var(--accent); font-weight: 500; }
+.rule { height: 1px; background: var(--border); margin: 28px 0; }
 
-/* AREAS & SALARY (Simplified for logic) */
-.areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 13px; }
-.area-card { padding: 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg2); }
+/* ENGLISH */
+.eng-row { display: grid; grid-template-columns: 90px 1fr; margin-bottom: 0; }
+.eng-year { padding: 26px 0; display: flex; flex-direction: column; align-items: center; }
+.eng-badge { font-family: var(--font-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 8px; border-radius: 4px; margin-bottom: 10px; }
+.eng-line { width: 1px; flex: 1; background: var(--border); }
+.eng-content { padding: 26px 0 26px 22px; border-left: 1px solid var(--border); }
+.eng-content h3 { font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+.eng-goal { font-size: 13px; color: var(--text2); margin-top: 12px; font-style: italic; }
+
+/* SALARY */
+.salary-section { margin-bottom: 36px; }
+.salary-section h3 { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 16px; }
 .salary-row { display: flex; align-items: center; gap: 14px; margin-bottom: 13px; }
-.salary-label { font-size: 13px; color: var(--text2); min-width: 150px; }
+.salary-label { font-size: 13px; color: var(--text2); min-width: 200px; }
+.salary-track { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.salary-fill2 { height: 100%; border-radius: 2px; }
+.salary-val { font-family: var(--font-mono); font-size: 12px; color: var(--text); min-width: 100px; text-align: right; }
 
-footer { border-top: 1px solid var(--border); padding: 28px 0; font-family: var(--font-mono); font-size: 11px; color: var(--text3); display: flex; justify-content: space-between; }
+/* AREAS */
+.areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 13px; }
+.area-card { padding: 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg2); transition: border-color 0.2s, transform 0.15s; }
+.area-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.area-icon { font-size: 22px; margin-bottom: 10px; }
+.area-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-bottom: 7px; }
+.area-desc { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.area-cert { display: inline-block; margin-top: 9px; font-family: var(--font-mono); font-size: 11px; color: var(--accent); }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border); padding: 28px 0; font-family: var(--font-mono); font-size: 11px; color: var(--text3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.section.active > * { animation: fadeUp 0.35s ease both; }
+.section.active > *:nth-child(2) { animation-delay: 0.04s; }
+.section.active > *:nth-child(3) { animation-delay: 0.08s; }
+.section.active > *:nth-child(4) { animation-delay: 0.12s; }
+
+@media(max-width:600px){
+  .hero h1{font-size:32px}
+  .phase-period{display:none}
+  .salary-label{min-width:130px;font-size:12px}
+  .eng-row{grid-template-columns:65px 1fr}
+  .dashboard{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
 
 <div class="wrap">
-    <div class="hero">
-        <div class="hero-tag">Guia de carreira · Cibersegurança · 2025–2030</div>
-        <h1>Seu caminho para<br><span>Cyber Security</span></h1>
-        <p style="color:var(--text2);max-width:520px;margin-top:10px">Roteiro interativo do ADS na UNIPE até o mercado global. Adicione itens e acompanhe seu progresso real.</p>
-        
-        <div class="dashboard">
-            <div class="dash-card">
-                <div class="dash-label">Ferramentas</div>
-                <div class="dash-count" id="count-tool">0 <span>/ 0</span></div>
-                <div class="dash-bar"><div class="dash-fill" id="bar-tool" style="width:0%;background:var(--accent2)"></div></div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-label">Certificações</div>
-                <div class="dash-count" id="count-cert">0 <span>/ 0</span></div>
-                <div class="dash-bar"><div class="dash-fill" id="bar-cert" style="width:0%;background:var(--accent)"></div></div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-label">Livros</div>
-                <div class="dash-count" id="count-book">0 <span>/ 0</span></div>
-                <div class="dash-bar"><div class="dash-fill" id="bar-book" style="width:0%;background:var(--accent3)"></div></div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-label">Progresso Geral</div>
-                <div class="dash-count" id="count-total">0%</div>
-                <div class="dash-bar"><div class="dash-fill" id="bar-total" style="width:0%;background:var(--purple)"></div></div>
-            </div>
-        </div>
+<div class="hero">
+  <div class="hero-tag">Guia de carreira · Cibersegurança · 2025–2030</div>
+  <h1>Seu caminho para<br><span>Cyber Security</span></h1>
+  <p style="color:var(--text2);max-width:520px;font-size:15px;line-height:1.8">Roteiro interativo do início do ADS na UNIPE até atuar como profissional requisitado — inclusive para empresas do exterior. Marque cada item conforme você avançar.</p>
+  <div class="hero-meta">
+    <div class="meta-item"><div class="dot" style="background:var(--accent)"></div>João Pessoa, PB · UNIPE · Agosto 2025</div>
+    <div class="meta-item"><div class="dot" style="background:var(--accent2)"></div>Início: 25 anos · ADS presencial</div>
+    <div class="meta-item"><div class="dot" style="background:var(--accent3)"></div>Meta: mercado internacional remoto</div>
+  </div>
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+    <div class="dash-card">
+      <div class="dash-label">Ferramentas</div>
+      <div class="dash-count" id="d-tools">0 <span>/ 0</span></div>
+      <div class="dash-bar"><div class="dash-fill" id="df-tools" style="width:0%;background:var(--accent2)"></div></div>
     </div>
+    <div class="dash-card">
+      <div class="dash-label">Certificações</div>
+      <div class="dash-count" id="d-certs">0 <span>/ 0</span></div>
+      <div class="dash-bar"><div class="dash-fill" id="df-certs" style="width:0%;background:var(--accent)"></div></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-label">Livros</div>
+      <div class="dash-count" id="d-books">0 <span>/ 0</span></div>
+      <div class="dash-bar"><div class="dash-fill" id="df-books" style="width:0%;background:var(--accent3)"></div></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-label">Progresso geral</div>
+      <div class="dash-count" id="d-total">0 <span>/ 0</span></div>
+      <div class="dash-bar"><div class="dash-fill" id="df-total" style="width:0%;background:var(--purple)"></div></div>
+    </div>
+  </div>
+</div>
 </div>
 
 <div class="tabs">
-    <div class="wrap">
-        <div class="tabs-inner">
-            <button class="tab-btn active" onclick="showTab('roadmap', this)">01 / Roadmap</button>
-            <button class="tab-btn" onclick="showTab('salary', this)">02 / Salários</button>
-            <button class="tab-btn" onclick="showTab('areas', this)">03 / Áreas</button>
-        </div>
+  <div class="wrap">
+    <div class="tabs-inner">
+      <button class="tab-btn active" onclick="showTab('roadmap',this)">01 / Roadmap</button>
+      <button class="tab-btn" onclick="showTab('english',this)">02 / Inglês</button>
+      <button class="tab-btn" onclick="showTab('salary',this)">03 / Salários</button>
+      <button class="tab-btn" onclick="showTab('areas',this)">04 / Áreas</button>
     </div>
+  </div>
 </div>
 
 <div class="wrap">
-    <div class="section active" id="tab-roadmap">
-        <div id="roadmap-container"></div>
-    </div>
 
-    <div class="section" id="tab-salary">
-        <h3 style="margin-bottom:20px; font-family:var(--font-mono); font-size:12px; color:var(--text3)">// EXPECTATIVA SALARIAL 2025</h3>
-        <div class="salary-row"><span class="salary-label">Júnior (BR)</span><div class="dash-bar" style="flex:1"><div class="dash-fill" style="width:20%; background:var(--accent2)"></div></div><span style="font-family:var(--font-mono); font-size:12px">R$ 3.5k</span></div>
-        <div class="salary-row"><span class="salary-label">Pleno (BR)</span><div class="dash-bar" style="flex:1"><div class="dash-fill" style="width:45%; background:var(--accent2)"></div></div><span style="font-family:var(--font-mono); font-size:12px">R$ 8.5k</span></div>
-        <div class="salary-row"><span class="salary-label">Sênior (Exterior)</span><div class="dash-bar" style="flex:1"><div class="dash-fill" style="width:100%; background:var(--accent)"></div></div><span style="font-family:var(--font-mono); font-size:12px">USD 8k+</span></div>
-    </div>
+<!-- ══ TAB ROADMAP ══ -->
+<div class="section active" id="tab-roadmap">
+  <p class="section-intro">Quatro fases ao longo de ~5 anos. Marque cada item conforme aprender. Use o botão <strong style="color:var(--accent)">+ adicionar</strong> para incluir novos conteúdos em qualquer seção.</p>
+  <div id="phases-container"></div>
+</div>
 
-    <div class="section" id="tab-areas">
-        <div class="areas-grid">
-            <div class="area-card"><h4>⚔️ Pentest</h4><p style="font-size:12px; color:var(--text2); margin-top:10px">Focado em ataque ofensivo e descoberta de falhas.</p></div>
-            <div class="area-card"><h4>🛡️ SOC Analyst</h4><p style="font-size:12px; color:var(--text2); margin-top:10px">Defesa e monitoramento de incidentes em tempo real.</p></div>
-            <div class="area-card"><h4>☁️ Cloud Security</h4><p style="font-size:12px; color:var(--text2); margin-top:10px">Segurança em ambientes AWS, Azure e Google Cloud.</p></div>
-        </div>
+<!-- ══ TAB INGLÊS ══ -->
+<div class="section" id="tab-english">
+  <p class="section-intro">O inglês é seu maior ativo para o mercado internacional. Estude em paralelo ao ADS — não precisa esperar estar "pronto".</p>
+  <div class="eng-row">
+    <div class="eng-year">
+      <span class="eng-badge" style="background:rgba(0,144,255,0.1);color:var(--accent2);border:1px solid rgba(0,144,255,0.2)">Ano 1</span>
+      <div class="eng-line"></div>
     </div>
+    <div class="eng-content">
+      <h3>Básico → Intermediário</h3>
+      <div class="tags" id="eng1-tags"></div>
+      <p class="eng-goal">→ Meta: ler documentações técnicas sem tradutor. Entender tutoriais em inglês no YouTube.</p>
+    </div>
+  </div>
+  <div class="eng-row">
+    <div class="eng-year">
+      <span class="eng-badge" style="background:rgba(245,158,11,0.1);color:var(--accent3);border:1px solid rgba(245,158,11,0.2)">Ano 2</span>
+      <div class="eng-line"></div>
+    </div>
+    <div class="eng-content">
+      <h3>Intermediário → Avançado técnico</h3>
+      <div class="tags" id="eng2-tags"></div>
+      <p class="eng-goal">→ Meta: escrever e-mails profissionais. Participar de calls técnicas. Documentar todo estudo em inglês.</p>
+    </div>
+  </div>
+  <div class="eng-row">
+    <div class="eng-year">
+      <span class="eng-badge" style="background:rgba(0,229,160,0.1);color:var(--accent);border:1px solid rgba(0,229,160,0.2)">Ano 3+</span>
+      <div class="eng-line"></div>
+    </div>
+    <div class="eng-content">
+      <h3>Avançado → Certificação oficial</h3>
+      <div class="tags" id="eng3-tags"></div>
+      <p class="eng-goal">→ Meta: entrevistas técnicas em inglês. O IELTS/TOEFL é exigido por empresas europeias e para visto de trabalho.</p>
+    </div>
+  </div>
+  <div class="tip" style="margin-top:28px"><strong>Dica de ouro:</strong> Não estude inglês isolado — estude dentro da cibersegurança. Leia artigos técnicos, assista CTF walkthroughs, resolva desafios em plataformas 100% em inglês. Em 18 meses você terá inglês técnico sólido.</div>
+</div>
 
-    <footer>
-        <span>ADS → Cyber Security · UNIPE</span>
-        <span>2025 Interativo</span>
-    </footer>
+<!-- ══ TAB SALÁRIOS ══ -->
+<div class="section" id="tab-salary">
+  <p class="section-intro">Referências salariais aproximadas para 2025. O mercado remoto é onde está o maior potencial para profissionais brasileiros.</p>
+  <div class="salary-section">
+    <h3>// Mercado nacional — CLT / PJ</h3>
+    <div class="salary-row"><span class="salary-label">Estagiário / júnior</span><div class="salary-track"><div class="salary-fill2" style="width:15%;background:var(--accent2)"></div></div><span class="salary-val">R$ 1.5k – 3k</span></div>
+    <div class="salary-row"><span class="salary-label">Analista pleno (2–4 anos)</span><div class="salary-track"><div class="salary-fill2" style="width:38%;background:var(--accent2)"></div></div><span class="salary-val">R$ 5k – 9k</span></div>
+    <div class="salary-row"><span class="salary-label">Sênior / pentester (5+ anos)</span><div class="salary-track"><div class="salary-fill2" style="width:62%;background:var(--accent2)"></div></div><span class="salary-val">R$ 12k – 22k</span></div>
+    <div class="salary-row"><span class="salary-label">Especialista / consultor</span><div class="salary-track"><div class="salary-fill2" style="width:85%;background:var(--accent2)"></div></div><span class="salary-val">R$ 20k – 40k</span></div>
+  </div>
+  <div class="rule"></div>
+  <div class="salary-section">
+    <h3>// Exterior — remoto (USD / ano)</h3>
+    <div class="salary-row"><span class="salary-label">SOC Analyst L1 remoto</span><div class="salary-track"><div class="salary-fill2" style="width:25%;background:var(--accent)"></div></div><span class="salary-val">USD 40k – 65k</span></div>
+    <div class="salary-row"><span class="salary-label">Pentester pleno</span><div class="salary-track"><div class="salary-fill2" style="width:50%;background:var(--accent)"></div></div><span class="salary-val">USD 70k – 100k</span></div>
+    <div class="salary-row"><span class="salary-label">Red Team Engineer</span><div class="salary-track"><div class="salary-fill2" style="width:72%;background:var(--accent)"></div></div><span class="salary-val">USD 100k – 140k</span></div>
+    <div class="salary-row"><span class="salary-label">Security Architect / CISO</span><div class="salary-track"><div class="salary-fill2" style="width:100%;background:var(--accent)"></div></div><span class="salary-val">USD 150k+</span></div>
+  </div>
+  <div class="tip"><strong>Por que brasileiros são disputados:</strong> Com OSCP + inglês avançado, profissionais brasileiros têm ótima formação técnica e custo menor que americanos/europeus equivalentes. Empresas de EUA, Holanda, Alemanha e UK contratam remotamente sem exigir visto.</div>
+</div>
+
+<!-- ══ TAB ÁREAS ══ -->
+<div class="section" id="tab-areas">
+  <p class="section-intro">Cibersegurança tem muitas especialidades. Conheça cada uma e decida seu foco no segundo ano de faculdade.</p>
+  <div class="areas-grid">
+    <div class="area-card"><div class="area-icon">⚔️</div><div class="area-title">Pentest / Red Team</div><div class="area-desc">Simular ataques reais contra organizações para encontrar vulnerabilidades antes de criminosos. A área mais demandada e bem remunerada. Exige criatividade e raciocínio lateral constante.</div><span class="area-cert">→ Cert. chave: OSCP</span></div>
+    <div class="area-card"><div class="area-icon">🛡️</div><div class="area-title">SOC / Blue Team</div><div class="area-desc">Monitorar, detectar e responder a incidentes em tempo real. Porta de entrada mais acessível. Usa SIEM, EDR, Splunk. Muitas vagas remotas disponíveis.</div><span class="area-cert">→ Cert. chave: CompTIA CySA+</span></div>
+    <div class="area-card"><div class="area-icon">🐛</div><div class="area-title">Bug Bounty</div><div class="area-desc">Encontrar vulnerabilidades em programas pagos por Google, Meta, Apple. Renda variável — pode ser pequena ou enorme. Alta concorrência global.</div><span class="area-cert">→ Plataforma: HackerOne</span></div>
+    <div class="area-card"><div class="area-icon">🔍</div><div class="area-title">Forense digital</div><div class="area-desc">Investigar crimes digitais, coletar evidências e responder a incidentes. Trabalha com polícia federal, empresas e processos judiciais.</div><span class="area-cert">→ Cert. chave: CHFI</span></div>
+    <div class="area-card"><div class="area-icon">☁️</div><div class="area-title">Cloud Security</div><div class="area-desc">Segurança em ambientes AWS, Azure e GCP. Explosão de vagas nos últimos anos. Combina perfeitamente com pentest. Altíssima demanda.</div><span class="area-cert">→ Cert. chave: AWS Security Specialty</span></div>
+    <div class="area-card"><div class="area-icon">💻</div><div class="area-title">AppSec / DevSecOps</div><div class="area-desc">Segurança integrada ao ciclo de desenvolvimento. Revisão de código, SAST, DAST. Perfeito para quem gosta de programar — usa muito Python e Go.</div><span class="area-cert">→ Cert. chave: GWEB / GWAPT</span></div>
+  </div>
+  <div class="tip" style="margin-top:28px"><strong>Recomendação:</strong> comece pelo Blue Team / SOC (mais fácil de estagiar) e migre para Pentest após o OSCP. Caminho mais rápido para o mercado internacional.</div>
+</div>
+
+</div><!-- /wrap -->
+
+<div class="wrap">
+  <footer>
+    <span>Roteiro gerado com Claude · Maio 2026</span>
+    <span>ADS → Cibersegurança · UNIPE João Pessoa</span>
+    <span>Versão 2.0 — interativo</span>
+  </footer>
 </div>
 
 <script>
-// DADOS INICIAIS
-const initialPhases = [
-    {
-        id: "p1", title: "FASE 01: Fundamentos & Base Técnica", num: "01", class: "num-blue",
-        tip: "<strong>Dica:</strong> Foque em Redes e Linux. Sem a base, o resto é impossível.",
-        subs: [
-            { id: "s1_1", label: "Faculdade & Teoria", type: "action", items: ["Algoritmos", "Redes de Computadores", "Sistemas Operacionais"] },
-            { id: "s1_2", label: "Ferramentas", type: "tool", items: ["Linux CLI", "Wireshark", "VirtualBox"] },
-            { id: "s1_3", label: "Certificações", type: "cert", items: ["CompTIA A+", "Cisco CCNA"] }
-        ]
-    },
-    {
-        id: "p2", title: "FASE 02: Especialização Inicial", num: "02", class: "num-amber",
-        tip: "<strong>Dica:</strong> Comece a resolver máquinas no TryHackMe.",
-        subs: [
-            { id: "s2_1", label: "Prática Ofensiva", type: "action", items: ["Nmap", "Metasploit", "Burp Suite"] },
-            { id: "s2_2", label: "Livros", type: "book", items: ["Hacking: The Art of Exploitation"] },
-            { id: "s2_3", label: "Certificações", type: "cert", items: ["CompTIA Security+", "eJPT"] }
-        ]
-    }
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const PHASES = [
+  {
+    id: 'p1', num: 'FASE 01', numClass: 'num-blue', open: true,
+    title: 'Fundamentos & base técnica', period: 'Ago 2025 – Jun 2026',
+    tip: '<strong>Laboratório em casa:</strong> Monte um ambiente com VirtualBox rodando Kali Linux + Metasploitable2 na mesma rede interna. Pratique as técnicas que aprender sem precisar da internet.',
+    sections: [
+      { id: 's1a', label: 'Na faculdade — aproveite ao máximo', defaultType: 'action', items: [
+        {id:'i1a1',text:'Algoritmos e lógica'},
+        {id:'i1a2',text:'Redes de computadores'},
+        {id:'i1a3',text:'Sistemas operacionais (Linux)'},
+        {id:'i1a4',text:'Banco de dados'},
+        {id:'i1a5',text:'Arquitetura de computadores'},
+      ]},
+      { id: 's1b', label: 'Ferramentas para instalar e aprender', defaultType: 'tool', items: [
+        {id:'i1b1',text:'Linux — Ubuntu / Kali'},
+        {id:'i1b2',text:'VirtualBox / VMware'},
+        {id:'i1b3',text:'Wireshark'},
+        {id:'i1b4',text:'Bash scripting'},
+        {id:'i1b5',text:'Python básico'},
+        {id:'i1b6',text:'Git & GitHub'},
+      ]},
+      { id: 's1c', label: 'Certificações-alvo desta fase', defaultType: 'cert', items: [
+        {id:'i1c1',text:'CompTIA A+'},
+        {id:'i1c2',text:'CompTIA Network+'},
+      ]},
+      { id: 's1d', label: 'Plataformas de estudo gratuitas', defaultType: 'action', items: [
+        {id:'i1d1',text:'TryHackMe — trilha pre-security'},
+        {id:'i1d2',text:'Cisco Networking Academy'},
+        {id:'i1d3',text:'Professor Messer (YouTube)'},
+      ]},
+      { id: 's1e', label: 'Leituras recomendadas', defaultType: 'book', items: [
+        {id:'i1e1',text:'Computer Networks — Tanenbaum'},
+        {id:'i1e2',text:'Linux Command Line — W. Shotts'},
+        {id:'i1e3',text:'The Web Application Hacker\'s Handbook'},
+      ]},
+    ]
+  },
+  {
+    id: 'p2', num: 'FASE 02', numClass: 'num-amber', open: false,
+    title: 'Especialização inicial + primeiro estágio', period: 'Jul 2026 – Jul 2027',
+    tip: '<strong>Portfólio público:</strong> Crie uma conta no LinkedIn em inglês agora. Para cada máquina do HackTheBox ou CTF que resolver, escreva um write-up no GitHub ou Medium. Recrutadores do exterior leem isso — é o seu portfólio real.',
+    sections: [
+      { id: 's2a', label: 'Certificações desta fase', defaultType: 'cert', items: [
+        {id:'i2a1',text:'CompTIA Security+'},
+        {id:'i2a2',text:'eJPT — eLearnSecurity (pentesting)'},
+      ]},
+      { id: 's2b', label: 'Ferramentas de ataque e análise', defaultType: 'tool', items: [
+        {id:'i2b1',text:'Nmap'},
+        {id:'i2b2',text:'Metasploit Framework'},
+        {id:'i2b3',text:'Burp Suite Community'},
+        {id:'i2b4',text:'Nessus / OpenVAS'},
+        {id:'i2b5',text:'John the Ripper'},
+        {id:'i2b6',text:'Hashcat'},
+        {id:'i2b7',text:'Hydra'},
+        {id:'i2b8',text:'Gobuster / ffuf'},
+      ]},
+      { id: 's2c', label: 'Plataformas de prática', defaultType: 'action', items: [
+        {id:'i2c1',text:'TryHackMe — trilhas intermediárias'},
+        {id:'i2c2',text:'HackTheBox — easy machines'},
+        {id:'i2c3',text:'PortSwigger Web Security Academy'},
+        {id:'i2c4',text:'PicoCTF — CTFs para iniciantes'},
+      ]},
+      { id: 's2d', label: 'Primeiras experiências profissionais', defaultType: 'action', items: [
+        {id:'i2d1',text:'Estágio em TI em João Pessoa'},
+        {id:'i2d2',text:'SOC Analyst júnior (remoto)'},
+        {id:'i2d3',text:'Help desk N2 com foco em segurança'},
+      ]},
+      { id: 's2e', label: 'Leituras recomendadas', defaultType: 'book', items: [
+        {id:'i2e1',text:'Hacking: The Art of Exploitation — J. Erickson'},
+        {id:'i2e2',text:'The Hacker Playbook 3 — P. Kim'},
+      ]},
+    ]
+  },
+  {
+    id: 'p3', num: 'FASE 03', numClass: 'num-green', open: false,
+    title: 'Profissionalização & certificações avançadas', period: 'Ago 2027 – Dez 2028',
+    tip: '<strong>O OSCP é o objetivo central.</strong> É 100% prático — 24h invadindo máquinas reais + 24h escrevendo relatório. Nenhuma questão de múltipla escolha. Recrutadores americanos e europeus reconhecem imediatamente. Comece a poupar para ela — custa em torno de USD 1.499.',
+    sections: [
+      { id: 's3a', label: 'Certificações de peso — escolha 1 ou 2', defaultType: 'cert', items: [
+        {id:'i3a1',text:'OSCP — OffSec Certified Professional ★'},
+        {id:'i3a2',text:'CEH — Certified Ethical Hacker'},
+        {id:'i3a3',text:'PNPT — TCM Security'},
+        {id:'i3a4',text:'CompTIA CySA+'},
+      ]},
+      { id: 's3b', label: 'Ferramentas avançadas', defaultType: 'tool', items: [
+        {id:'i3b1',text:'Cobalt Strike'},
+        {id:'i3b2',text:'BloodHound / SharpHound'},
+        {id:'i3b3',text:'Impacket suite'},
+        {id:'i3b4',text:'OWASP ZAP'},
+        {id:'i3b5',text:'Splunk'},
+        {id:'i3b6',text:'Elastic SIEM'},
+        {id:'i3b7',text:'Volatility — memória forense'},
+        {id:'i3b8',text:'Ghidra / IDA Free — reversing'},
+        {id:'i3b9',text:'Responder'},
+        {id:'i3b10',text:'CrackMapExec'},
+      ]},
+      { id: 's3c', label: 'Prática avançada', defaultType: 'action', items: [
+        {id:'i3c1',text:'HackTheBox Pro — medium/hard'},
+        {id:'i3c2',text:'HTB Pro Labs (Offshore, RastaLabs)'},
+        {id:'i3c3',text:'Vulnhub — máquinas offline'},
+        {id:'i3c4',text:'Bug Bounty — HackerOne / Bugcrowd'},
+      ]},
+      { id: 's3d', label: 'Cursos extras recomendados', defaultType: 'action', items: [
+        {id:'i3d1',text:'TCM Security — Practical Ethical Hacking'},
+        {id:'i3d2',text:'INE — eCPPT / eWPT'},
+        {id:'i3d3',text:'PentesterLab'},
+      ]},
+      { id: 's3e', label: 'Leituras recomendadas', defaultType: 'book', items: [
+        {id:'i3e1',text:'Penetration Testing — G. Weidman'},
+        {id:'i3e2',text:'RTFM: Red Team Field Manual'},
+        {id:'i3e3',text:'Practical Malware Analysis'},
+        {id:'i3e4',text:'The Art of Intrusion — K. Mitnick'},
+      ]},
+    ]
+  },
+  {
+    id: 'p4', num: 'FASE 04', numClass: 'num-purple', open: false,
+    title: 'Mercado internacional & especialização sênior', period: '2029 em diante',
+    tip: '<strong>Potencial real:</strong> Com OSCP + inglês fluente + 3 anos de experiência, você está qualificado para vagas remotas pagando entre USD 60k–120k/ano — trabalhando de João Pessoa para empresas americanas e europeias, sem precisar emigrar.',
+    sections: [
+      { id: 's4a', label: 'Certificações sênior', defaultType: 'cert', items: [
+        {id:'i4a1',text:'CISSP — gestão / arquitetura'},
+        {id:'i4a2',text:'CISM'},
+        {id:'i4a3',text:'CRTO — Red Team Ops'},
+        {id:'i4a4',text:'GPEN / GWAPT — SANS Institute'},
+        {id:'i4a5',text:'AWS Security Specialty'},
+        {id:'i4a6',text:'Azure Security Engineer (AZ-500)'},
+      ]},
+      { id: 's4b', label: 'Onde buscar vagas remotas no exterior', defaultType: 'action', items: [
+        {id:'i4b1',text:'LinkedIn — filtro "remote" + EUA/EU'},
+        {id:'i4b2',text:'Toptal — seleção rigorosa, alta remuneração'},
+        {id:'i4b3',text:'Turing.com'},
+        {id:'i4b4',text:'Upwork — pentest / bug bounty'},
+        {id:'i4b5',text:'HackerOne — bug bounty direto'},
+        {id:'i4b6',text:'Remotive.com'},
+      ]},
+      { id: 's4c', label: 'Leituras desta fase', defaultType: 'book', items: [
+        {id:'i4c1',text:'The Shellcoder\'s Handbook'},
+        {id:'i4c2',text:'Silence on the Wire — M. Zalewski'},
+        {id:'i4c3',text:'Ghost in the Wires — K. Mitnick'},
+      ]},
+    ]
+  }
 ];
 
-// ESTADO DO APLICATIVO (SALVO NO LOCALSTORAGE)
-let state = JSON.parse(localStorage.getItem('cyber_roadmap_save')) || {
-    checked: {},
-    customItems: {}
+const ENG_SECTIONS = [
+  { containerId: 'eng1-tags', defaultType: 'action', items: [
+    {id:'e1a',text:'Duolingo diário + Anki (vocabulário)'},
+    {id:'e1b',text:'English in Use — Cambridge'},
+    {id:'e1c',text:'Podcast: Darknet Diaries (EN)'},
+    {id:'e1d',text:'YouTube: NetworkChuck em inglês'},
+    {id:'e1e',text:'Filmes/séries sem legenda PT'},
+  ]},
+  { containerId: 'eng2-tags', defaultType: 'action', items: [
+    {id:'e2a',text:'Italki — aulas com professor nativo'},
+    {id:'e2b',text:'Write-ups em inglês no Medium/GitHub'},
+    {id:'e2c',text:'Reddit: r/netsec, r/AskNetsec'},
+    {id:'e2d',text:'CTFs: escrever relatórios em inglês'},
+    {id:'e2e',text:'Calls em inglês com comunidades online'},
+  ]},
+  { containerId: 'eng3-tags', defaultType: 'action', items: [
+    {id:'e3a',text:'IELTS — mínimo 7.0', type:'cert'},
+    {id:'e3b',text:'TOEFL — mínimo 90 pontos', type:'cert'},
+    {id:'e3c',text:'Mock interviews: Pramp / Interviewing.io'},
+    {id:'e3d',text:'Apresentações técnicas em comunidades EN'},
+  ]},
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = {
+  checked: {},     // itemId -> bool
+  removed: {},     // itemId -> bool
+  custom: [],      // [{id, sectionId, type, text}]
 };
 
-function save() {
-    localStorage.setItem('cyber_roadmap_save', JSON.stringify(state));
-    updateDashboard();
+function loadState() {
+  try { const s = localStorage.getItem('cyberRoadmap_v2'); if(s) state = JSON.parse(s); } catch(e){}
+}
+function saveState() {
+  try { localStorage.setItem('cyberRoadmap_v2', JSON.stringify(state)); } catch(e){}
 }
 
-function showTab(id, btn) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+// ─── RENDER HELPERS ──────────────────────────────────────────────────────────
+function mkId() { return 'c' + Math.random().toString(36).slice(2,9); }
+
+function typeLabel(t) {
+  return {cert:'certificação', tool:'ferramenta', book:'livro', action:'curso/plataforma'}[t] || t;
 }
 
-function render() {
-    const container = document.getElementById('roadmap-container');
-    container.innerHTML = '';
+function renderItem(item, sectionId, defaultType, canDelete) {
+  const type = item.type || defaultType;
+  const checked = !!state.checked[item.id];
+  const wrap = document.createElement('div');
+  wrap.className = 'item-wrap' + (canDelete ? '' : ' no-del');
+  wrap.dataset.itemId = item.id;
 
-    initialPhases.forEach(phase => {
-        const card = document.createElement('div');
-        card.className = `phase-card ${state.checked[phase.id] ? 'open' : ''}`;
-        card.id = `card-${phase.id}`;
+  const label = document.createElement('label');
+  label.className = 'cb-item t-' + type + (checked ? ' checked' : '');
 
-        let phaseTotal = 0;
-        let phaseChecked = 0;
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = checked;
+  cb.addEventListener('change', () => {
+    state.checked[item.id] = cb.checked;
+    label.classList.toggle('checked', cb.checked);
+    const span = label.querySelector('.item-text');
+    if(span) span.style.textDecoration = cb.checked ? 'line-through' : '';
+    saveState(); updateDashboard(); updatePhaseProgress();
+  });
 
-        let subsHtml = '';
-        phase.subs.forEach(sub => {
-            const customs = state.customItems[sub.id] || [];
-            const allItems = [...sub.items, ...customs];
-            
-            let itemsHtml = '';
-            allItems.forEach(item => {
-                const itemId = `it-${phase.id}-${sub.id}-${item.replace(/\s/g, '')}`;
-                const isChecked = state.checked[itemId];
-                phaseTotal++;
-                if (isChecked) phaseChecked++;
+  const span = document.createElement('span');
+  span.className = 'item-text';
+  span.textContent = item.text;
+  if(checked) span.style.textDecoration = 'line-through';
 
-                itemsHtml += `
-                    <label class="cb-item ${isChecked ? 'checked' : ''}">
-                        <input type="checkbox" onchange="toggleItem('${itemId}')" ${isChecked ? 'checked' : ''}>
-                        <span class="item-text">${item}</span>
-                    </label>
-                `;
-            });
+  label.appendChild(cb);
+  label.appendChild(span);
+  wrap.appendChild(label);
 
-            subsHtml += `
-                <div class="sub">
-                    <div class="sub-header">
-                        <span class="sub-label">${sub.label}</span>
-                        <button class="add-btn" onclick="addItem('${sub.id}')">+ adicionar</button>
-                    </div>
-                    <div class="tags">${itemsHtml}</div>
-                </div>
-            `;
-        });
-
-        const pct = phaseTotal > 0 ? (phaseChecked / phaseTotal) * 100 : 0;
-
-        card.innerHTML = `
-            <div class="phase-header" onclick="togglePhase('${phase.id}')">
-                <span class="phase-num ${phase.class}">${phase.num}</span>
-                <span class="phase-title-text">${phase.title}</span>
-                <span class="phase-chevron">▼</span>
-            </div>
-            <div class="phase-body">
-                ${subsHtml}
-                <div class="tip">${phase.tip}</div>
-            </div>
-            <div class="phase-progress">
-                <div class="dash-bar" style="flex:1; height:4px"><div class="pp-fill" style="width:${pct}%"></div></div>
-                <span style="font-family:var(--font-mono); font-size:10px; color:var(--text3); margin-left:10px">${Math.round(pct)}%</span>
-            </div>
-        `;
-        container.appendChild(card);
+  if(canDelete) {
+    const del = document.createElement('button');
+    del.className = 'del-btn';
+    del.title = 'Remover item';
+    del.innerHTML = '×';
+    del.addEventListener('click', () => {
+      state.removed[item.id] = true;
+      // remove from custom if it is one
+      state.custom = state.custom.filter(c => c.id !== item.id);
+      saveState();
+      wrap.remove();
+      updateDashboard(); updatePhaseProgress();
     });
-    updateDashboard();
+    wrap.appendChild(del);
+  }
+  return wrap;
 }
 
-function togglePhase(id) {
-    const card = document.getElementById('card-' + id);
-    card.classList.toggle('open');
-    state.checked[id] = card.classList.contains('open');
-    save();
+function renderAddForm(sectionId, defaultType, container) {
+  const form = document.createElement('div');
+  form.className = 'add-form';
+  form.id = 'form-' + sectionId;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Nome do item...';
+  input.maxLength = 80;
+
+  const sel = document.createElement('select');
+  ['action','tool','cert','book'].forEach(t => {
+    const o = document.createElement('option');
+    o.value = t; o.textContent = typeLabel(t);
+    if(t === defaultType) o.selected = true;
+    sel.appendChild(o);
+  });
+
+  const btnOk = document.createElement('button');
+  btnOk.className = 'btn-confirm'; btnOk.textContent = 'Adicionar';
+
+  const btnX = document.createElement('button');
+  btnX.className = 'btn-cancel'; btnX.textContent = 'Cancelar';
+
+  btnOk.addEventListener('click', () => {
+    const txt = input.value.trim();
+    if(!txt) { input.focus(); return; }
+    const newItem = { id: mkId(), sectionId, type: sel.value, text: txt };
+    state.custom.push(newItem);
+    saveState();
+    const tagsDiv = document.getElementById('tags-' + sectionId);
+    tagsDiv.appendChild(renderItem(newItem, sectionId, sel.value, true));
+    input.value = '';
+    form.classList.remove('open');
+    updateDashboard(); updatePhaseProgress();
+  });
+
+  input.addEventListener('keydown', e => { if(e.key==='Enter') btnOk.click(); if(e.key==='Escape') btnX.click(); });
+
+  btnX.addEventListener('click', () => { form.classList.remove('open'); input.value=''; });
+
+  form.appendChild(input);
+  form.appendChild(sel);
+  form.appendChild(btnOk);
+  form.appendChild(btnX);
+  return form;
 }
 
-function toggleItem(id) {
-    state.checked[id] = !state.checked[id];
-    save();
-    render();
+function renderSection(sec, container) {
+  const sub = document.createElement('div');
+  sub.className = 'sub';
+
+  // header row
+  const hdr = document.createElement('div');
+  hdr.className = 'sub-header';
+
+  const lbl = document.createElement('div');
+  lbl.className = 'sub-label';
+  lbl.textContent = sec.label;
+  hdr.appendChild(lbl);
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-btn';
+  addBtn.textContent = '+ adicionar';
+  addBtn.addEventListener('click', () => {
+    const f = document.getElementById('form-' + sec.id);
+    f.classList.toggle('open');
+    if(f.classList.contains('open')) f.querySelector('input').focus();
+  });
+  hdr.appendChild(addBtn);
+  sub.appendChild(hdr);
+
+  // tags container
+  const tags = document.createElement('div');
+  tags.className = 'tags';
+  tags.id = 'tags-' + sec.id;
+
+  // default items (not removed)
+  sec.items.forEach(item => {
+    if(state.removed[item.id]) return;
+    tags.appendChild(renderItem(item, sec.id, sec.defaultType, true));
+  });
+
+  // custom items for this section
+  state.custom.filter(c => c.sectionId === sec.id).forEach(item => {
+    tags.appendChild(renderItem(item, sec.id, item.type, true));
+  });
+
+  sub.appendChild(tags);
+
+  // add form
+  sub.appendChild(renderAddForm(sec.id, sec.defaultType, sub));
+
+  container.appendChild(sub);
 }
 
-function addItem(subId) {
-    const val = prompt("O que deseja adicionar?");
-    if (val) {
-        if (!state.customItems[subId]) state.customItems[subId] = [];
-        state.customItems[subId].push(val);
-        save();
-        render();
-    }
+// ─── PHASE RENDER ────────────────────────────────────────────────────────────
+function renderPhases() {
+  const container = document.getElementById('phases-container');
+  container.innerHTML = '';
+  PHASES.forEach(phase => {
+    const card = document.createElement('div');
+    card.className = 'phase-card' + (phase.open ? ' open' : '');
+    card.id = 'card-' + phase.id;
+
+    // header
+    const hdr = document.createElement('div');
+    hdr.className = 'phase-header';
+    hdr.innerHTML = `<span class="phase-num ${phase.numClass}">${phase.num}</span>
+      <span class="phase-title-text">${phase.title}</span>
+      <span class="phase-period">${phase.period}</span>
+      <span class="phase-chevron">↓</span>`;
+    hdr.addEventListener('click', () => { card.classList.toggle('open'); updatePhaseProgress(); });
+    card.appendChild(hdr);
+
+    // progress bar
+    const prog = document.createElement('div');
+    prog.className = 'phase-progress';
+    prog.id = 'prog-' + phase.id;
+    prog.innerHTML = `<span class="pp-label">progresso</span><div class="pp-track"><div class="pp-fill" id="ppf-${phase.id}" style="width:0%"></div></div><span class="pp-pct" id="ppp-${phase.id}">0%</span>`;
+    card.appendChild(prog);
+
+    // body
+    const body = document.createElement('div');
+    body.className = 'phase-body';
+    body.id = 'body-' + phase.id;
+
+    // phase done checkbox at top of body
+    const doneRow = document.createElement('div');
+    doneRow.className = 'phase-complete-row';
+    const doneCheck = document.createElement('input');
+    doneCheck.type = 'checkbox';
+    doneCheck.id = 'done-' + phase.id;
+    doneCheck.checked = !!state.checked['phase-' + phase.id];
+    doneCheck.style.cssText = 'appearance:none;-webkit-appearance:none;width:15px;height:15px;border:1px solid var(--text3);border-radius:3px;cursor:pointer;flex-shrink:0;position:relative;transition:all 0.15s;margin-right:6px;vertical-align:middle;';
+    if(doneCheck.checked) { doneCheck.style.background='var(--accent)'; doneCheck.style.borderColor='var(--accent)'; card.classList.add('phase-done'); }
+    doneCheck.addEventListener('change', () => {
+      state.checked['phase-' + phase.id] = doneCheck.checked;
+      card.classList.toggle('phase-done', doneCheck.checked);
+      if(doneCheck.checked){ doneCheck.style.background='var(--accent)'; doneCheck.style.borderColor='var(--accent)'; }
+      else { doneCheck.style.background=''; doneCheck.style.borderColor='var(--text3)'; }
+      saveState(); updateDashboard();
+    });
+    const doneLabel = document.createElement('label');
+    doneLabel.htmlFor = 'done-' + phase.id;
+    doneLabel.className = 'phase-done-label';
+    doneLabel.textContent = 'Marcar fase como concluída';
+    doneLabel.style.cursor = 'pointer';
+    doneRow.appendChild(doneCheck);
+    doneRow.appendChild(doneLabel);
+    body.appendChild(doneRow);
+
+    // sections
+    phase.sections.forEach(sec => renderSection(sec, body));
+
+    // tip
+    const tip = document.createElement('div');
+    tip.className = 'tip';
+    tip.innerHTML = phase.tip;
+    body.appendChild(tip);
+
+    card.appendChild(body);
+    container.appendChild(card);
+  });
+}
+
+// ─── ENGLISH SECTION RENDER ──────────────────────────────────────────────────
+function renderEnglish() {
+  ENG_SECTIONS.forEach(esec => {
+    const container = document.getElementById(esec.containerId);
+    if(!container) return;
+    esec.items.forEach(item => {
+      if(state.removed[item.id]) return;
+      container.appendChild(renderItem(item, esec.containerId, item.type || esec.defaultType, true));
+    });
+    state.custom.filter(c => c.sectionId === esec.containerId).forEach(item => {
+      container.appendChild(renderItem(item, esec.containerId, item.type, true));
+    });
+  });
+}
+
+// ─── DASHBOARD & PROGRESS ────────────────────────────────────────────────────
+function getAllItems() {
+  const items = [];
+  PHASES.forEach(ph => ph.sections.forEach(sec => {
+    sec.items.forEach(it => { if(!state.removed[it.id]) items.push({...it, type: it.type || sec.defaultType}); });
+    state.custom.filter(c => c.sectionId === sec.id).forEach(it => items.push(it));
+  }));
+  ENG_SECTIONS.forEach(esec => {
+    esec.items.forEach(it => { if(!state.removed[it.id]) items.push({...it, type: it.type || esec.defaultType}); });
+    state.custom.filter(c => c.sectionId === esec.containerId).forEach(it => items.push(it));
+  });
+  return items;
 }
 
 function updateDashboard() {
-    const counters = { tool: {c:0, t:0}, cert: {c:0, t:0}, book: {c:0, t:0}, total: {c:0, t:0} };
-
-    initialPhases.forEach(p => {
-        p.subs.forEach(s => {
-            const all = [...s.items, ...(state.customItems[s.id] || [])];
-            all.forEach(it => {
-                const id = `it-${p.id}-${s.id}-${it.replace(/\s/g, '')}`;
-                counters.total.t++;
-                if (state.checked[id]) counters.total.c++;
-
-                if (counters[s.type]) {
-                    counters[s.type].t++;
-                    if (state.checked[id]) counters[s.type].c++;
-                }
-            });
-        });
-    });
-
-    ['tool', 'cert', 'book'].forEach(type => {
-        const c = counters[type];
-        document.getElementById(`count-${type}`).innerHTML = `${c.c} <span>/ ${c.t}</span>`;
-        document.getElementById(`bar-${type}`).style.width = (c.t > 0 ? (c.c/c.t)*100 : 0) + '%';
-    });
-
-    const overall = counters.total.t > 0 ? Math.round((counters.total.c / counters.total.t) * 100) : 0;
-    document.getElementById('count-total').innerText = overall + '%';
-    document.getElementById('bar-total').style.width = overall + '%';
+  const all = getAllItems();
+  const types = { tool: {total:0,done:0}, cert: {total:0,done:0}, book: {total:0,done:0} };
+  let total = 0, done = 0;
+  all.forEach(it => {
+    const t = it.type;
+    if(types[t]) { types[t].total++; if(state.checked[it.id]) types[t].done++; }
+    total++;
+    if(state.checked[it.id]) done++;
+  });
+  function set(id, fillId, t) {
+    const el = document.getElementById(id); if(!el) return;
+    const pct = t.total ? Math.round(t.done/t.total*100) : 0;
+    el.innerHTML = `${t.done} <span>/ ${t.total}</span>`;
+    const f = document.getElementById(fillId); if(f) f.style.width = pct + '%';
+  }
+  set('d-tools','df-tools',types.tool);
+  set('d-certs','df-certs',types.cert);
+  set('d-books','df-books',types.book);
+  const tEl = document.getElementById('d-total'); if(tEl) tEl.innerHTML = `${done} <span>/ ${total}</span>`;
+  const tf = document.getElementById('df-total'); if(tf) tf.style.width = (total ? Math.round(done/total*100) : 0) + '%';
 }
 
-// INICIAR
-render();
+function updatePhaseProgress() {
+  PHASES.forEach(ph => {
+    let total = 0, done = 0;
+    ph.sections.forEach(sec => {
+      sec.items.forEach(it => {
+        if(!state.removed[it.id]) { total++; if(state.checked[it.id]) done++; }
+      });
+      state.custom.filter(c => c.sectionId === sec.id).forEach(it => { total++; if(state.checked[it.id]) done++; });
+    });
+    const pct = total ? Math.round(done/total*100) : 0;
+    const fill = document.getElementById('ppf-' + ph.id); if(fill) fill.style.width = pct + '%';
+    const pctEl = document.getElementById('ppp-' + ph.id); if(pctEl) pctEl.textContent = pct + '%';
+  });
+}
+
+// ─── TAB NAVIGATION ──────────────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+loadState();
+renderPhases();
+renderEnglish();
+updateDashboard();
+updatePhaseProgress();
 </script>
 </body>
 </html>
